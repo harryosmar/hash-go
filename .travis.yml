@@ -1,0 +1,9 @@
+language: go
+
+go:
+  - 1.20.0  # You can specify the Go versions you want to test against
+
+script:
+  - go test -v ./...
+
+# You can add additional configurations based on your needs
