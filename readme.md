@@ -1,5 +1,7 @@
 # github.com/harryosmar/hash-go
 
+[![Go Test](https://github.com/harryosmar/hash-go/actions/workflows/go_test.yml/badge.svg)](https://github.com/harryosmar/hash-go/actions/workflows/go_test.yml)
+
 Provide hash function :
 - [RSA 256](https://github.com/harryosmar/hash-go/blob/master/signer_rsa256.go)
 - [SHA1](https://github.com/harryosmar/hash-go/blob/master/signer_sha1.go)
