@@ -1,0 +1,11 @@
+image: golang:1.15
+
+build-job:
+  stage: build
+  script:
+    - go mod download
+
+test-job:
+  stage: test
+  script:
+    -  go test ./ -v
