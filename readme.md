@@ -1,6 +1,5 @@
 # github.com/harryosmar/hash-go
 
-[![Go Test](https://github.com/harryosmar/hash-go/actions/workflows/go_test.yml/badge.svg)](https://github.com/harryosmar/hash-go/actions/workflows/go_test.yml)
 [![Latest Version](https://img.shields.io/github/release/harryosmar/hash-go.svg?style=flat-square)](https://github.com/harryosmar/hash-go/releases)
 
 Provide hash function :
