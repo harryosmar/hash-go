@@ -7,6 +7,7 @@ import (
 	"errors"
 	hash "github.com/harryosmar/hash-go"
 	"testing"
+	"time"
 )
 
 const (
@@ -197,6 +198,62 @@ func TestGenerateJwtSignRS256Hmac(t *testing.T) {
 			}
 
 			hmac := hash.NewJwtSignRS256Hmac(privateKey, publicKey)
+
+			claims, err := hash.PayloadToJwtClaims(tt.args.payload)
+			if err != nil {
+				t.Error(err)
+				return
+			}
+
+			actualStr, err := hmac.Sign(context.TODO(), claims)
+			if err != nil {
+				t.Error(err)
+				return
+			}
+
+			if tt.expectedResult != actualStr {
+				t.Errorf("expected %s got %s", tt.expectedResult, actualStr)
+				return
+			}
+		})
+	}
+}
+
+func TestGenerateJwtSignSHA256Hmac(t *testing.T) {
+	type args struct {
+		payload []byte
+		secret  string
+	}
+	testData := []struct {
+		name           string
+		args           args
+		expectedResult string
+	}{
+		{
+			name: "1. Should be valid",
+			args: args{
+				payload: func() []byte {
+					now := time.Unix(1516239022, 0)
+					m := map[string]any{
+						"appKey":   "appId",
+						"mn":       "00000",
+						"role":     0,
+						"iat":      now.Unix(),
+						"exp":      now.Add(time.Duration(48) * time.Hour).Unix(),
+						"tokenExp": now.Add(time.Duration(48) * time.Hour).Unix(),
+					}
+					bytes, _ := json.Marshal(m)
+					return bytes
+				}(),
+				secret: "appSecret",
+			},
+			expectedResult: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBLZXkiOiJhcHBJZCIsImV4cCI6MTUxNjQxMTgyMiwiaWF0IjoxNTE2MjM5MDIyLCJtbiI6IjAwMDAwIiwicm9sZSI6MCwidG9rZW5FeHAiOjE1MTY0MTE4MjJ9.QPK9GTS3qTd5FedeLZ94izH-XAysjjVMh8pWL8FLjuM`,
+		},
+	}
+
+	for _, tt := range testData {
+		t.Run(tt.name, func(t *testing.T) {
+			hmac := hash.NewJwtSignSHA256Hmac(tt.args.secret)
 
 			claims, err := hash.PayloadToJwtClaims(tt.args.payload)
 			if err != nil {
