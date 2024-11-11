@@ -52,10 +52,10 @@ func (mr *MockJwtSignMockRecorder) Sign(arg0, arg1 interface{}) *gomock.Call {
 }
 
 // Validate mocks base method.
-func (m *MockJwtSign) Validate(arg0 context.Context, arg1 string) (*jwt.MapClaims, error) {
+func (m *MockJwtSign) Validate(arg0 context.Context, arg1 string) (jwt.MapClaims, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Validate", arg0, arg1)
-	ret0, _ := ret[0].(*jwt.MapClaims)
+	ret0, _ := ret[0].(jwt.MapClaims)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

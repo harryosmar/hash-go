@@ -21,7 +21,7 @@ func (j JwtSignSHA256Hmac) Sign(ctx context.Context, payload *jwt.MapClaims) (st
 	return token.SignedString(j.secret)
 }
 
-func (j JwtSignSHA256Hmac) Validate(ctx context.Context, tokenStr string) (*jwt.MapClaims, error) {
+func (j JwtSignSHA256Hmac) Validate(ctx context.Context, tokenStr string) (jwt.MapClaims, error) {
 	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
 		return j.secret, nil
 	})
@@ -36,7 +36,7 @@ func (j JwtSignSHA256Hmac) Validate(ctx context.Context, tokenStr string) (*jwt.
 			return nil, err
 		}
 
-		return &claims, nil
+		return claims, nil
 	}
 
 	return nil, err

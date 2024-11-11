@@ -24,7 +24,7 @@ func (j JwtSignRS256Hmac) Sign(ctx context.Context, payload *jwt.MapClaims) (str
 	return token.SignedString(j.privateKey)
 }
 
-func (j JwtSignRS256Hmac) Validate(ctx context.Context, tokenStr string) (*jwt.MapClaims, error) {
+func (j JwtSignRS256Hmac) Validate(ctx context.Context, tokenStr string) (jwt.MapClaims, error) {
 	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
 		// Don't forget to validate the alg is what you expect:
 		if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
@@ -44,7 +44,7 @@ func (j JwtSignRS256Hmac) Validate(ctx context.Context, tokenStr string) (*jwt.M
 			return nil, err
 		}
 
-		return &claims, nil
+		return claims, nil
 	}
 
 	return nil, err

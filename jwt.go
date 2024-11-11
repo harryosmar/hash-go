@@ -10,7 +10,7 @@ import (
 //go:generate mockgen -destination=mocks/mock_JwtSign.go -package=mocks . JwtSign
 type JwtSign interface {
 	Sign(ctx context.Context, payload *jwt.MapClaims) (string, error)
-	Validate(ctx context.Context, token string) (*jwt.MapClaims, error)
+	Validate(ctx context.Context, token string) (jwt.MapClaims, error)
 	ValidateReturnBytes(ctx context.Context, token string) ([]byte, error)
 	ValidateReturnReader(ctx context.Context, token string) (io.Reader, error)
 }
