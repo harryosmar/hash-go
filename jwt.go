@@ -3,7 +3,7 @@ package signature_go
 import (
 	"context"
 	"encoding/json"
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt/v5"
 	"io"
 )
 

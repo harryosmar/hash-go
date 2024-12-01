@@ -5,7 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt/v5"
 	"io"
 )
 
@@ -55,11 +55,6 @@ func (j JwtSignHS512Hmac) Validate(ctx context.Context, tokenStr string) (*jwt.M
 	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		err = claims.Valid()
-		if err != nil {
-			return nil, err
-		}
-
 		return &claims, nil
 	}
 

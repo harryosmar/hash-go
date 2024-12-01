@@ -4,7 +4,8 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"github.com/dgrijalva/jwt-go"
+	"fmt"
+	"github.com/golang-jwt/jwt/v5"
 	"io"
 )
 
@@ -23,6 +24,10 @@ func (j JwtSignSHA256Hmac) Sign(ctx context.Context, payload *jwt.MapClaims) (st
 
 func (j JwtSignSHA256Hmac) Validate(ctx context.Context, tokenStr string) (jwt.MapClaims, error) {
 	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+		}
+
 		return j.secret, nil
 	})
 
@@ -31,11 +36,6 @@ func (j JwtSignSHA256Hmac) Validate(ctx context.Context, tokenStr string) (jwt.M
 	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		err = claims.Valid()
-		if err != nil {
-			return nil, err
-		}
-
 		return claims, nil
 	}
 

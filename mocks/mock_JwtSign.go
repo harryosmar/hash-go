@@ -9,7 +9,7 @@ import (
 	io "io"
 	reflect "reflect"
 
-	jwt "github.com/dgrijalva/jwt-go"
+	jwt "github.com/golang-jwt/jwt/v5"
 	gomock "github.com/golang/mock/gomock"
 )
 

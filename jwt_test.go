@@ -42,7 +42,7 @@ func TestValidateJwtSignHS512Hmac(t *testing.T) {
 				token:  "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhbW91bnQiOjIwMDAwLCJjb3Vyc2VfY29kZSI6Im1lbWJ1MHVtenBmeDhqMyIsImNvdXJzZV9pZCI6NTU4MiwiY3JlYXRlZF9hdCI6MTY2MjAyNjQ5MSwiaW52b2ljZV9jb2RlIjoiaW52b2ljZS10cmFuc2FjdGlvbi10ZXN0MTExMDAyMiIsImludm9pY2VfdXJsIjoiaHR0cDovL3BsYXRmb3JtLmNvbS9pbnZvaWNlL0lOVjAwMDEiLCJwbGF0Zm9ybV9pZCI6Mywic2NoZWR1bGVfaWQiOjExLCJzdGF0dXMiOjAsInVzZXJfdWQiOjI1N30.twL4lZMBwkudun5k16JBFUkeC3REvbmiUWjR0paV6Al8SrSkLTw2ZoqUCxO96xjBsQOjmokk620PMGXgi2yDzQ",
 			},
 			isExpectErr: true,
-			expectedErr: errors.New("signature is invalid"),
+			expectedErr: errors.New("token signature is invalid: signature is invalid"),
 		},
 		{
 			name: "3. Given valid secret but token payload contained `exp` field with value expired Then Should be invalid",
@@ -51,7 +51,7 @@ func TestValidateJwtSignHS512Hmac(t *testing.T) {
 				token:  "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhbW91bnQiOjIwMDAwLCJjb3Vyc2VfY29kZSI6Im1lbWJ1MHVtenBmeDhqMyIsImNvdXJzZV9pZCI6NTU4MiwiY3JlYXRlZF9hdCI6MTY2MjAyNjQ5MSwiaW52b2ljZV9jb2RlIjoiaW52b2ljZS10cmFuc2FjdGlvbi10ZXN0MTExMDAyMiIsImludm9pY2VfdXJsIjoiaHR0cDovL3BsYXRmb3JtLmNvbS9pbnZvaWNlL0lOVjAwMDEiLCJwbGF0Zm9ybV9pZCI6Mywic2NoZWR1bGVfaWQiOjExLCJzdGF0dXMiOjAsInVzZXJfdWQiOjI1NywiZXhwIjoxNTE2MjM5MDIyfQ.-wV2w0OIJNVeRlCYJkjKK6_92DPLFDVZSc2_-OYVLRtV4_Kwt5zo0HmhazO53jtN1m_t5uJbicZv6wSleHMVSA",
 			},
 			isExpectErr: true,
-			expectedErr: errors.New("Token is expired"),
+			expectedErr: errors.New("token has invalid claims: token is expired"),
 		},
 		{
 			name: "4. Given valid secret and token payload contained `exp` field with value  not expired Then Should be valid",
