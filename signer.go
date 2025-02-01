@@ -10,6 +10,7 @@ import (
 	"encoding/pem"
 	"errors"
 	"fmt"
+	"strings"
 )
 
 //go:generate mockgen -destination=mocks/mock_Signer.go -package=mocks . Signer
@@ -28,7 +29,7 @@ func SignOutputHex(data []byte) string {
 }
 
 func LoadPrivateKeyFromBase64Encoded(base64EncodedKey string) (*rsa.PrivateKey, error) {
-	keyBytes, err := base64.StdEncoding.DecodeString(base64EncodedKey)
+	keyBytes, err := DecodeBase64(base64EncodedKey)
 	if err != nil {
 		return nil, err
 	}
@@ -36,8 +37,18 @@ func LoadPrivateKeyFromBase64Encoded(base64EncodedKey string) (*rsa.PrivateKey, 
 	return GetPrivateKeyFromBytes(keyBytes)
 }
 
+func DecodeBase64(input string) ([]byte, error) {
+	// Add padding back
+	padding := len(input) % 4
+	if padding != 0 {
+		input += strings.Repeat("=", 4-padding)
+	}
+
+	return base64.StdEncoding.DecodeString(input)
+}
+
 func LoadPublicKeyFromBase64Encoded(base64EncodedKey string) (*rsa.PublicKey, error) {
-	keyBytes, err := base64.StdEncoding.DecodeString(base64EncodedKey)
+	keyBytes, err := DecodeBase64(base64EncodedKey)
 	if err != nil {
 		return nil, err
 	}
