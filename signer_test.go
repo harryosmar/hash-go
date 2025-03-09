@@ -4,6 +4,7 @@ import (
 	"context"
 	_ "crypto/sha512"
 	hash "github.com/harryosmar/hash-go"
+	"github.com/stretchr/testify/assert"
 	"log"
 	"net/url"
 	"testing"
@@ -106,6 +107,56 @@ func TestSha256PrivateKeySigner(t *testing.T) {
 				t.Errorf("expect %s got %s", tt.expectedResult, sign)
 				return
 			}
+		})
+	}
+}
+
+func TestGetPublicKeyFromBytesV2(t *testing.T) {
+
+	type args struct {
+	}
+	testData := []struct {
+		name           string
+		args           args
+		expectedResult string
+		publicKeyBytes []byte
+		checksum       string
+	}{
+		{
+			name:           "Should be valid",
+			args:           args{},
+			expectedResult: "",
+			publicKeyBytes: []byte(`-----BEGIN PUBLIC KEY-----
+MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAyZ8o/B2NPV1/fcITOihi
+1GBNbidZmGn74opJYGPWpssd/mtj729MEYhI3XGMDsyK34LGNd5egiYNu86NiBqU
+8mQyfQyo2ihsqHONs+oovWwSBk1nWOqBCWWOlxeKJfy4Kmu063TsJD1B7gOpv2bo
+DWPw9MF2LG5Ce+nOlztonsnN/yYlUF9+Ble4zlknNLCi/kmd+TcglQN/ax1cORdc
+oDkAq8o6DNiDSlXmWdg3Qd9nY/EKHy/kc35kR5PheaL3RC51JNwcNX7A49ZTayT9
+VaaqQ1RKNHJTqjjaoE15ch8PCzfqWMCyFLjBt3GdG7zLqENN3O+qLg2QWyu4Ech9
+yCcshgrODZfD1And8qSvgV9EBsWLQ0J+OyCcglsxJtKsi7t7TuKc1HDNqPjLru2o
+TlWXPnOezW+xx0S0bgK6uQMXmKRCN4tTYKPcIceEC/MChVjvuz0hky3w5OsUzNeJ
+AIdY7na5iF7jmVPChKicK3a3cxnse4RFjaz6HjDYWuaINx48LHo82Q6sYd9RVxgs
+MJ/dP4tEAm4bYCv7UjIub9pVqyPixqp/A8KEpBRzTosfA3ituDT1KbvYiyTcdfJW
+0+AOUOSkp7JqRwHNVRC4ldgTS19zLDC1g6WOxjsol9TbefLpX/QxCknCV26LHFEe
+P5ch3JGYvGb8qIHwVzD+FEkCAwEAAQ==
+-----END PUBLIC KEY-----
+`),
+			checksum: "4ab797e367d2aecd46cfbd125537472f5b98f39d",
+		},
+	}
+
+	for _, tt := range testData {
+		t.Run(tt.name, func(t *testing.T) {
+			key, keyBytes, err := hash.GetPublicKeyFromBytesV2(tt.publicKeyBytes)
+			log.Printf("public key %v\n", key)
+
+			signerSha1 := hash.NewSignerSha1("")
+			checksumBytes, err := signerSha1.Sign(context.TODO(), keyBytes)
+			checksum := hash.SignOutputHex(checksumBytes)
+			assert.NoError(t, err)
+			log.Printf("public bytes %v\n", checksum)
+			assert.NoError(t, err)
+			assert.Equal(t, tt.checksum, checksum)
 		})
 	}
 }

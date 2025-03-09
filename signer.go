@@ -2,6 +2,8 @@ package signature_go
 
 import (
 	"context"
+	"crypto/ecdsa"
+	"crypto/ed25519"
 	"crypto/rsa"
 	_ "crypto/sha512"
 	"crypto/x509"
@@ -89,6 +91,56 @@ func GetPublicKeyFromBytes(publicKeyPem []byte) (*rsa.PublicKey, error) {
 	default:
 		err := fmt.Errorf("ssh: unsupported publickey type %T", rawKey)
 		return nil, err
+	}
+}
+
+func GetPublicKeyFromBytesV2(publicKeyPem []byte) (*rsa.PublicKey, []byte, error) {
+	block, _ := pem.Decode(publicKeyPem)
+	if block == nil {
+		err := errors.New("ssh: no publicKey found")
+		return nil, nil, err
+	}
+
+	var rawKey interface{}
+	var rawBytes []byte
+
+	switch block.Type {
+	case "RSA PUBLIC KEY":
+		rsaPrivate, err := x509.ParsePKCS1PublicKey(block.Bytes)
+		if err != nil {
+			return nil, rawBytes, err
+		}
+		rawKey = rsaPrivate
+		rawBytes, err = x509.MarshalPKIXPublicKey(rawKey)
+		if err != nil {
+			return nil, rawBytes, err
+		}
+	case "PUBLIC KEY":
+		rsaPrivate, err := x509.ParsePKIXPublicKey(block.Bytes)
+		if err != nil {
+			return nil, rawBytes, err
+		}
+		rawKey = rsaPrivate
+		switch key := rawKey.(type) {
+		case *rsa.PublicKey, *ecdsa.PublicKey, ed25519.PublicKey:
+			rawBytes, err = x509.MarshalPKIXPublicKey(rawKey)
+			if err != nil {
+				return nil, rawBytes, err
+			}
+		default:
+			return nil, rawBytes, fmt.Errorf("ssh: unsupported public key type %T", key)
+		}
+	default:
+		err := fmt.Errorf("ssh: unsupported publicKey type %q", block.Type)
+		return nil, rawBytes, err
+	}
+
+	switch t := rawKey.(type) {
+	case *rsa.PublicKey:
+		return t, rawBytes, nil
+	default:
+		err := fmt.Errorf("ssh: unsupported publickey type %T", rawKey)
+		return nil, rawBytes, err
 	}
 }
 
